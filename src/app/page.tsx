@@ -1,13 +1,14 @@
 import { auth } from '@clerk/nextjs/server';
 import { db } from '../db';
 import { retentionPolicies, mockFiles, auditLogs } from '../db/schema';
-import { createPolicy, deletePolicy, generateMockFile, manualRunEngine, clearLogs, togglePolicy, resetWorkspace } from './actions';
+import { ilike, or, eq, and } from 'drizzle-orm';
+import { createPolicy, deletePolicy, manualRunEngine, clearLogs, togglePolicy, resetWorkspace } from './actions';
 import Navbar from '../components/Navbar';
 import StatCard from '../components/StatCard';
 import EmptyState from '../components/EmptyState';
 import StorageBar from '../components/StorageBar';
 import PolicyBadge from '../components/PolicyBadge';
-import { ilike, or, eq, and } from 'drizzle-orm';
+import FileUploader from '../components/FileUploader';
 import SearchBar from '../components/SearchBar';
 
 export const dynamic = 'force-dynamic';
@@ -139,10 +140,7 @@ return (
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Simulated File System</h2>
             <div className="flex gap-2">
-              <form action={generateMockFile}>
-                <input type="hidden" name="fileType" value="Screenshots" />
-                <button type="submit" className="bg-gray-800 dark:bg-gray-700 text-white text-sm px-4 py-2 rounded transition-colors">+ Old Screenshot</button>
-              </form>
+              <FileUploader />
               <form action={manualRunEngine}>
                 <button type="submit" className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-4 py-2 rounded shadow flex items-center gap-2 transition-colors">
                   ⚡ Run Engine Now
@@ -165,7 +163,7 @@ return (
             <EmptyState 
               icon="📂" 
               title="File system is empty" 
-              description="Click '+ Old Screenshot' above to generate test files for the engine to scan." 
+              description="Click 'Choose File(s)' above to upload files and see them appear here. You can also run the engine to simulate file cleanup." 
             />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
